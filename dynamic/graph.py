@@ -8,13 +8,13 @@ def build_scdg(syscall_sequence, window=2):
     if not syscall_sequence or len(syscall_sequence) < window:
         return None
 
-    for syscall in set(syscall_sequence):
+    for syscall in set(syscall_sequence): #Every unique syscall name becomes a single node which compresses the graph from thousands of nodes to a fixed set of behaviors
         G.add_node(syscall)
 
-    for i in range(len(syscall_sequence) - window + 1):
+    for i in range(len(syscall_sequence) - window + 1): #iterate thru the sequence
         src = syscall_sequence[i]
         dst = syscall_sequence[i + 1]
-        if G.has_edge(src, dst):
+        if G.has_edge(src, dst): #if the edge already exist, we increase the weight
             G[src][dst]['weight'] += 1
         else:
             G.add_edge(src, dst, weight=1)
@@ -49,13 +49,13 @@ def run_single_file(input_path, output_dir):
         return False
 
 if __name__ == "__main__":
-    # Check if we are being called by the Batch Pipeline
+
     if len(sys.argv) >= 3:
         input_file = sys.argv[1]
         output_folder = sys.argv[2]
         success = run_single_file(input_file, output_folder)
         if not success:
-            sys.exit(1)  # Tell the batch script we failed
+            sys.exit(1)
     else:
         print("Usage: python3 graph.py <input_json> <output_dir>")
         sys.exit(1)
