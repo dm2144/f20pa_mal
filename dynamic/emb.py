@@ -10,13 +10,12 @@ def run_embedding_pipeline(graphml_input_path, output_base_folder):
         print(f"[ERROR] File {graphml_input_path} not found.")
         return
 
-    # Check for empty files (char 0 errors)
+    #checks for empty files (char 0 errors)
     if os.path.getsize(graphml_input_path) == 0:
         print(f"[SKIP] {graphml_input_path} is empty. Skipping...")
         return
 
     try:
-        # CRITICAL FIX: Use read_graphml instead of json.load
         G = nx.read_graphml(graphml_input_path)
     except Exception as e:
         print(f"[ERROR] {graphml_input_path} is not a valid GraphML file: {e}")
@@ -26,15 +25,15 @@ def run_embedding_pipeline(graphml_input_path, output_base_folder):
         print(f"[SKIP] {graphml_input_path} has too few nodes for embedding.")
         return
 
-    print(f"--- Processing: {os.path.basename(graphml_input_path)} ---")
+    print(f"Processing: {os.path.basename(graphml_input_path)}")
     print(f"Nodes: {G.number_of_nodes()} | Edges: {G.number_of_edges()}")
 
     # 2. Node2Vec Feature Extraction
-    print("Generating Random Walks...")
+    print("Generating Random Walks")
     # dimensions=64 for GNN input; workers=1 to prevent zsh suspension/crashes
     node2vec = Node2Vec(G, dimensions=64, walk_length=30, num_walks=100, workers=1, quiet=True)
     
-    print("Fitting Node2Vec model...")
+    print("Fitting Node2Vec model")
     model = node2vec.fit(window=10, min_count=1, batch_words=4)
 
     # 3. Create Feature Matrix [Nodes, 64]
@@ -48,7 +47,7 @@ def run_embedding_pipeline(graphml_input_path, output_base_folder):
     # 5. Clean Output Structure
     base_name = os.path.splitext(os.path.basename(graphml_input_path))[0]
     
-    # Store all .npy files in these two central folders
+    # Stores all .npy files in these two central folders
     node_dir = os.path.join(output_base_folder, "nodes")
     edge_dir = os.path.join(output_base_folder, "edges")
 
@@ -61,11 +60,11 @@ def run_embedding_pipeline(graphml_input_path, output_base_folder):
     np.save(node_out_path, embeddings)
     np.save(edge_out_path, edge_index)
     
-    print(f"✓ SUCCESS: {base_name}")
+    print(f"SUCCESS: {base_name}")
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:
-        print("\nUsage: python3 ge_em.py <input_graphml> <base_output_directory>")
+        print("\nUsage: python3 emb.py <input_graphml> <base_output_directory>") #for ref
     else:
         run_embedding_pipeline(sys.argv[1], sys.argv[2])
 
