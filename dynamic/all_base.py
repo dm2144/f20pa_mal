@@ -3,7 +3,7 @@ import sys
 
 def main():
     if len(sys.argv) != 4:
-        print("Usage: python3 pipeline_v2.py <benign_raw> <malware_raw> <output_workspace>")
+        print("Usage: python3 all_base.py <benign_raw> <malware_raw> <output_workspace>")
         sys.exit(1)
 
     raw_benign = sys.argv[1]
