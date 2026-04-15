@@ -13,12 +13,12 @@ def is_elf(file_path):
         return False
 
 def process_samples(input_dir, output_dir):
-    # Create output directory if it doesn't exist
+    #creates output directory if it doesn't exist
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
         print(f"Created output folder: {output_dir}")
 
-    # Find all files in the input directory
+    #finds all files in the input directory
     samples = []
     for root, dirs, files in os.walk(input_dir):
         for file in files:
@@ -55,7 +55,7 @@ def process_samples(input_dir, output_dir):
                 # Kill the main process
                 proc.kill()
                 proc.wait()
-                # Secondary cleanup for any leftovers
+                #secondary cleanup for any leftovers
                 subprocess.run(["pkill", "-9", "-f", sample_name], stderr=subprocess.DEVNULL)
             
             # Verify the file was actually written
